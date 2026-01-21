@@ -6,11 +6,11 @@ import datetime
 from sqlalchemy import create_engine, Column, Integer, String, Float, Boolean, DateTime
 from sqlalchemy.orm import sessionmaker, declarative_base
 
-# --- Configuration ---
+
 DATABASE_URL = "sqlite:///./tickets.db"
 MODEL_PATH = "models/model_pipeline.joblib"
 
-# --- Database Setup ---
+
 engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
@@ -19,7 +19,8 @@ class TicketDB(Base):
     __tablename__ = "tickets"
 
     id = Column(Integer, primary_key=True, index=True)
-    sender = Column(String, index=True) # "from" is a reserved keyword in Python
+    sender = Column(String, index=True)
+
     text = Column(String)
     label = Column(String)
     confidence = Column(Float)
@@ -30,7 +31,7 @@ class TicketDB(Base):
 
 Base.metadata.create_all(bind=engine)
 
-# --- ML Model Loading ---
+
 try:
     pipeline = joblib.load(MODEL_PATH)
     ml_models_loaded = True
@@ -38,7 +39,7 @@ except Exception as e:
     print(f"Warning: ML models not loaded. {e}")
     ml_models_loaded = False
 
-# --- Pydantic Models ---
+
 class PredictRequest(BaseModel):
     text: str
 
@@ -89,7 +90,7 @@ class ResolveResponse(BaseModel):
     status: str
     resolved_at: datetime.datetime
 
-# --- FastAPI App ---
+
 app = FastAPI(title="AI Message Triage System")
 
 def get_db():
@@ -119,14 +120,14 @@ def ingest_message(request: IngestRequest):
     if not ml_models_loaded:
         raise HTTPException(status_code=503, detail="ML models not available")
 
-    # Prediction
+
     label = pipeline.predict([request.text])[0]
     probabilities = pipeline.predict_proba([request.text])[0]
     confidence = float(max(probabilities))
     
     triage_required = confidence < 0.7
     
-    # DB Creation
+
     db = SessionLocal()
     db_ticket = TicketDB(
         sender=request.sender,
@@ -144,8 +145,9 @@ def ingest_message(request: IngestRequest):
     
     return {
         "id": db_ticket.id,
-        "from": db_ticket.sender, # Return "from" in the JSON
-        "sender": db_ticket.sender, # Also return "sender" if needed or rely on alias
+        "from": db_ticket.sender,
+        "sender": db_ticket.sender,
+
         "text": db_ticket.text,
         "label": db_ticket.label,
         "confidence": db_ticket.confidence,

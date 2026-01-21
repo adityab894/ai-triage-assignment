@@ -37,16 +37,6 @@ def train():
 
     print("Saving artifacts...")
     joblib.dump(pipeline, 'models/model_pipeline.joblib')
-    # Note: Using a single pipeline object is cleaner, but the assignment asks for separate saves.
-    # We can save the components separately to strictly adhere, but pipeline is industry standard.
-    # Let's save the pipeline as the main 'model.joblib' effectively, or extract components.
-    # Based on prompt "models/model.joblib" and "models/vectorizer.joblib"
-    
-    # Extracting for strict compliance if needed, but Pipeline object is usually what you load.
-    # However, to facilitate easy usage similar to "vectorizer.transform" then "model.predict", let's save both.
-    # Actually, saving the pipeline is safer for inference consistency. 
-    # But let's stick to the prompt structure if strictly required, OR just save the pipeline which contains both.
-    # The prompt says: "modules/model.joblib" and "modules/vectorizer.joblib".
     
     joblib.dump(pipeline.named_steps['tfidf'], 'models/vectorizer.joblib')
     joblib.dump(pipeline.named_steps['clf'], 'models/model.joblib')

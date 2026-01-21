@@ -30,23 +30,6 @@ wheels/
 
 # ML Models
 models/*.pkl
-# We want to commit the models for this assignment? 
-# Usually we don't, but the prompt implies "Expected Project Files" includes models/.
-# If we assume we should check them in, we shouldn't fail to track them.
-# The previous gitignore had models/*.joblib. 
-# "models/ # Saved model + vectorizer" is in the tree.
-# I will interpret "Expected Project Files" as what should exist in the folder, not necessarily what is strictly committed vs ignored in a real production env.
-# BUT, standard practice is to IGNORE generated files. 
-# The user's previous git commit had `models/` as untracked.
-# I will restore the gitignore as it was likely intended but maybe comment out the models ignore if they want to see them in the file explorer easily or just leave it standard.
-# The prompt doesn't explicitly say "Check in the models". It just says "Expected Project Files".
-# I'll stick to the standard python gitignore but maybe allow joblib if the user wants to see them as part of the "project files".
-# Actually, the user deleted .gitignore.
-# Let's restore it to a sensible default.
-# The previous diff showed:
-# models/*.pkl
-# models/*.joblib
-# So I will restore that.
 
 models/*.pkl
 models/*.joblib
